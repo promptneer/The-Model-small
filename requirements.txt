@@ -1,0 +1,19 @@
+# 老仓管 · Python 依赖
+# ── 核心链路（调度器/台账/原子操作）：零第三方依赖，标准库即可运行 ──
+#
+# ── 模型后端（按需二选一）──
+# 路线 A（推荐，RTX5060 8G）：安装 Ollama（https://ollama.com），拉 qwen2.5:3b。
+#   无需任何 pip 包。
+#
+# 路线 B（本机 GTX1650 4G 已实测）：llama-cpp-python 直读 GGUF。
+#   Windows 上 PyPI 无预编译 wheel，需本机编译（需要 cmake + gcc/g++）：
+#     pip install llama-cpp-python==0.3.19 -i https://pypi.tuna.tsinghua.edu.cn/simple
+#   编译注意事项见 docs/03-部署与测试教程.md。
+#   其运行依赖（下面三行，pip 装 llama-cpp-python 时会自动带）：
+#     typing_extensions>=4.5.0
+#     diskcache>=5.6.1
+#     jinja2>=2.11.3
+#     numpy>=1.24
+
+# ── 开发调试（可选）──
+requests>=2.25

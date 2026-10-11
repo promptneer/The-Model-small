@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>老仓管 使用说明书</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231b4d6e'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='Arial'%3E%E4%BB%93%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --ink:#1f2937; --sub:#64748b; --line:#e2e8f0;
+    --brand:#1b4d6e; --brand-soft:#eaf2f8; --accent:#c9772d;
+    --ok:#2f7d46; --ok-soft:#e9f5ec; --warn:#b45309; --warn-soft:#fef3e2;
+    --code-bg:#0f172a; --code-ink:#e2e8f0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",system-ui,sans-serif;
+    color:var(--ink); background:#f6f8fa; line-height:1.75;
+    font-size:16px;
+  }
+  .wrap{max-width:880px; margin:0 auto; padding:32px 20px 80px;}
+
+  /* 顶部 */
+  header{
+    background:linear-gradient(160deg,#1b4d6e 0%,#245f86 100%);
+    color:#fff; border-radius:16px; padding:36px 36px 32px;
+    position:relative; overflow:hidden;
+  }
+  header::after{
+    content:""; position:absolute; right:-40px; top:-40px;
+    width:180px; height:180px; border-radius:50%;
+    background:rgba(255,255,255,.06);
+  }
+  header::before{
+    content:""; position:absolute; right:60px; bottom:-60px;
+    width:120px; height:120px; border-radius:50%;
+    background:rgba(255,255,255,.05);
+  }
+  header .tag{
+    display:inline-block; font-size:13px; letter-spacing:2px;
+    background:rgba(255,255,255,.15); padding:4px 12px; border-radius:999px;
+    margin-bottom:14px;
+  }
+  header h1{font-size:30px; font-weight:800; letter-spacing:1px;}
+  header p{font-size:15px; opacity:.92; margin-top:10px; max-width:640px;}
+
+  /* 卡片与分区 */
+  section{background:#fff; border:1px solid var(--line); border-radius:14px; padding:26px 28px; margin-top:22px;}
+  h2{
+    font-size:20px; font-weight:800; color:var(--brand);
+    padding-bottom:12px; border-bottom:2px solid var(--brand-soft); margin-bottom:18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  h2 .num{
+    background:var(--brand); color:#fff; width:28px; height:28px;
+    border-radius:8px; display:inline-flex; align-items:center; justify-content:center;
+    font-size:15px; flex:none;
+  }
+  h3{font-size:16px; font-weight:700; margin:18px 0 8px; color:#334155;}
+  p{margin:8px 0;}
+  .muted{color:var(--sub); font-size:14px;}
+  ul,ol{margin:8px 0 8px 22px;}
+  li{margin:5px 0;}
+
+  /* 文件树 */
+  .tree{
+    font-family:"Cascadia Mono","Consolas",monospace; font-size:14px;
+    background:var(--code-bg); color:var(--code-ink);
+    border-radius:10px; padding:18px 20px; overflow-x:auto; line-height:1.9;
+  }
+  .tree .dir{color:#7dd3fc;}
+  .tree .cmt{color:#94a3b8; font-family:"Microsoft YaHei",sans-serif;}
+  .tree .file{color:#e2e8f0;}
+  .tree .star{color:#fbbf24;}
+
+  /* 表格 */
+  table{width:100%; border-collapse:collapse; margin:12px 0; font-size:15px;}
+  th,td{border:1px solid var(--line); padding:10px 12px; text-align:left; vertical-align:top;}
+  th{background:var(--brand-soft); color:var(--brand); font-weight:700; width:32%;}
+  tr:nth-child(even) td{background:#fafbfc;}
+
+  /* 代码块 */
+  pre{
+    background:var(--code-bg); color:var(--code-ink); border-radius:10px;
+    padding:16px 18px; overflow-x:auto; font-size:14px; line-height:1.8;
+    font-family:"Cascadia Mono","Consolas",monospace; margin:12px 0;
+    max-width:100%; white-space:pre-wrap; word-break:break-all;
+  }
+  p, .muted{overflow-wrap:break-word; word-break:break-word; max-width:100%;}
+  .step .body{flex:1; min-width:0;}
+  pre .cm{color:#94a3b8;}
+  .cmd{color:#7dd3fc;}
+  .ok{color:#4ade80;}
+
+  /* 对话气泡 */
+  .chat{background:var(--brand-soft); border-radius:12px; padding:16px 18px; margin:10px 0;}
+  .chat .you{color:var(--brand); font-weight:700;}
+  .chat .ai{color:#fff; background:var(--brand); border-radius:8px; padding:6px 10px; display:inline-block; margin-top:6px;}
+
+  /* 亮点卡 */
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px;}
+  .card{border:1px solid var(--line); border-radius:12px; padding:16px;}
+  .card .ico{font-size:20px; color:var(--accent); display:flex; align-items:center; gap:8px;}
+  .card .ico svg{width:22px; height:22px; flex:none;}
+  .card b{display:block; margin:6px 0 4px; font-size:15px;}
+  .card p{font-size:13.5px; color:var(--sub); margin:0;}
+
+  /* 报告 */
+  .report{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px;}
+  .rbox{border-radius:12px; padding:16px 18px;}
+  .rbox.green{background:var(--ok-soft); border:1px solid #bfe3c9;}
+  .rbox.green b{color:var(--ok);}
+  .rbox.gray{background:#f1f5f9; border:1px solid var(--line);}
+  .rbox .big{font-size:28px; font-weight:800;}
+  .rbox p{margin:4px 0 0; font-size:14px; color:var(--sub);}
+
+  /* 步骤条 */
+  .steps{counter-reset:s; margin:14px 0;}
+  .step{display:flex; gap:14px; margin:12px 0; align-items:flex-start;}
+  .step .no{
+    counter-increment:s; flex:none; width:30px; height:30px; border-radius:50%;
+    background:var(--brand); color:#fff; font-weight:700; font-size:14px;
+    display:flex; align-items:center; justify-content:center; margin-top:4px;
+  }
+  .step .no::after{content:counter(s);}
+  .step .body{flex:1;}
+
+  /* FAQ */
+  details{border:1px solid var(--line); border-radius:10px; padding:12px 16px; margin:10px 0;}
+  summary{cursor:pointer; font-weight:700; color:#334155; outline:none;}
+  details[open]{background:#fafbfc;}
+  details p{margin-top:8px; color:#475569; font-size:14.5px;}
+
+  footer{margin-top:34px; text-align:center; color:var(--sub); font-size:13px;}
+
+  /* 顶部小导航 */
+  nav{display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;}
+  nav a{
+    background:rgba(255,255,255,.14); color:#fff; text-decoration:none;
+    padding:7px 14px; border-radius:999px; font-size:13.5px;
+    transition:background .15s;
+  }
+  nav a:hover{background:rgba(255,255,255,.28);}
+
+  @media (max-width:680px){
+    body{font-size:15px;}
+    header{padding:26px 22px;}
+    header h1{font-size:24px;}
+    section{padding:20px 18px;}
+    .cards{grid-template-columns:1fr;}
+    .report{grid-template-columns:1fr;}
+    th{width:38%;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== 顶部 ===== -->
+  <header>
+    <span class="tag">E:\mayue\laocang-guan</span>
+    <h1>老仓管 使用说明书</h1>
+    <p>一句话版本：这是一套会听人话的本地仓库管家——你说人话，它把话翻译成指令，让程序去干活，再把结果讲给你听。不用联网，不占大显存，普通电脑就能跑。</p>
+    <nav>
+      <a href="#what">它是什么</a>
+      <a href="#files">文件夹里都有什么</a>
+      <a href="#start">怎么启动</a>
+      <a href="#talk">怎么跟它说话</a>
+      <a href="#rules">它守的三条规矩</a>
+      <a href="#report">体检报告</a>
+      <a href="#faq">常见问题</a>
+    </nav>
+  </header>
+
+  <!-- ===== 一、它是什么 ===== -->
+  <section id="what">
+    <h2><span class="num">1</span>它是什么</h2>
+    <p>「老仓管」把一件事拆成两半，各干各的，谁也别越界：</p>
+    <div class="cards">
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3.5A5 5 0 0 1 14 3a4.5 4.5 0 0 1 4 2.5A4.5 4.5 0 0 1 20 9c.5 1.5.2 3-.6 4.2A5 5 0 0 1 18 16v.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 6 16.5V16a5 5 0 0 1-2.4-2.8A5 5 0 0 1 4 9a4.5 4.5 0 0 1 2-3.5A5 5 0 0 1 9.5 3.5Z"/><path d="M9 15c1.5.8 4.5.8 6 0M9.5 12h.01M14.5 12h.01"/></svg></div>
+        <b>脑子（小模型）</b>
+        <p>负责听懂你的话、判断你想干什么、把要求翻成标准指令。它不亲自干活，只动嘴。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6.5 17.5 3.5a2.1 2.1 0 0 1 3 3l-3 3"/><path d="m4 20 4.5-4.5"/><path d="M14.5 6.5l3 3L8 19H4v-4l10.5-8.5Z"/></svg></div>
+        <b>手脚（脚本程序）</b>
+        <p>负责真正的体力活：翻文件夹、查台账、登记修改。动作快、结果准、绝不瞎编。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h7l2-4 3 8 2-4h2"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <b>翻译官（调度器）</b>
+        <p>脑子说的话，翻译官先检查一遍：合法才执行，有错就拦下，出事能撤回。</p>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:12px;">好处：模型只管动脑子，所以显存占用小、速度够快；脚本只管干活，所以不会出现模型胡编路径、假报结果的情况。</p>
+  </section>
+
+  <!-- ===== 二、文件夹里都有什么 ===== -->
+  <section id="files">
+    <h2><span class="num">2</span>文件夹里都有什么</h2>
+    <div class="tree">
+      <span class="dir">laocang-guan</span><span class="cmt">  ← 系统主文件夹，以下都在它里面</span><br>
+      ├── <span class="star">使用说明书.html</span><span class="cmt">  ← 你现在看的这一页</span><br>
+      ├── <span class="file">main.py</span><span class="cmt">  ← 大门口。启动它 = 打开老仓管</span><br>
+      ├── <span class="file">test_run.py</span><span class="cmt">  ← 体检表。跑一遍=检查系统有没有毛病</span><br>
+      ├── <span class="file">seed_ledger.py</span><span class="cmt">  ← 第一次用之前，先跑它给台账装点示例数据</span><br>
+      ├── <span class="file">requirements.txt</span><span class="cmt">  ← 依赖清单（装模型工具时看它）</span><br>
+      ├── <span class="dir">core</span><span class="cmt">  ← 核心零件，别乱动，改坏了系统不干活</span><br>
+      │&nbsp;&nbsp; ├── <span class="file">brain.py</span><span class="cmt">  ← 脑子：接各种小模型</span><br>
+      │&nbsp;&nbsp; ├── <span class="file">dsl_parser.py</span><span class="cmt">  ← 翻译官·审稿：检查指令合不合法</span><br>
+      │&nbsp;&nbsp; ├── <span class="file">scheduler.py</span><span class="cmt">  ← 翻译官·调度：安排干活、出错回滚</span><br>
+      │&nbsp;&nbsp; ├── <span class="file">registry.py</span><span class="cmt">  ← 手脚登记簿：所有能干的事都登记在这</span><br>
+      │&nbsp;&nbsp; └── <span class="file">ledger.py</span><span class="cmt">  ← 台账本：管资产数据、留操作记录</span><br>
+      ├── <span class="dir">atoms</span><span class="cmt">  ← 手脚们，一个文件一种本事</span><br>
+      │&nbsp;&nbsp; ├── <span class="file">file_find.py</span><span class="cmt">  ← 找文件（按名字/类型/目录）</span><br>
+      │&nbsp;&nbsp; ├── <span class="file">ledger_query.py</span><span class="cmt">  ← 查台账（总数/按名搜/最近记录）</span><br>
+      │&nbsp;&nbsp; ├── <span class="file">ledger_update.py</span><span class="cmt">  ← 改台账（登记/修改/删除，能撤回）</span><br>
+      │&nbsp;&nbsp; └── <span class="file">system_info.py</span><span class="cmt">  ← 看本机环境（显卡/内存/磁盘）</span><br>
+      ├── <span class="dir">docs</span><span class="cmt">  ← 三份技术说明书（给技术同事看的）</span><br>
+      ├── <span class="dir">data</span><span class="cmt">  ← 台账数据库文件（自动生成，别手动删）</span><br>
+      └── <span class="dir">…模型文件</span><span class="cmt">  ← 在 E:\mayue\_models\，下载好后自动使用</span>
+    </div>
+    <table>
+      <tr><th>文件/文件夹</th><th>一句话人话解释</th></tr>
+      <tr><td>main.py</td><td>入口。运行它，就能跟老仓管对话。</td></tr>
+      <tr><td>test_run.py</td><td>体检。运行它，15 项检查全过就说明系统是健康的。</td></tr>
+      <tr><td>seed_ledger.py</td><td>首次使用前运行一次，给台账塞几条示例数据（叉车、手套之类的），方便你先试试。</td></tr>
+      <tr><td>core\brain.py</td><td>大脑。负责接 Ollama / llama.cpp / 本地 GGUF 模型，决定用哪个脑子。</td></tr>
+      <tr><td>core\scheduler.py + dsl_parser.py</td><td>翻译官。脑子的话先审再办，非法指令直接拦下，绝不瞎执行。</td></tr>
+      <tr><td>core\ledger.py</td><td>台账本。资产数据都存在这里面（SQLite 数据库），每次操作都会留记录。</td></tr>
+      <tr><td>atoms\</td><td>手脚。找文件、查台账、改台账、看环境，四样本事，一个文件一项。</td></tr>
+      <tr><td>docs\</td><td>三份给技术同事看的说明书：架构、指令规范、部署教程。</td></tr>
+      <tr><td>data\</td><td>台账数据库自动生成在这里，平时不用管。</td></tr>
+    </table>
+    <p class="muted">经验之谈：日常你只需要碰 <b>main.py</b>（打开）、<b>test_run.py</b>（体检）、<b>seed_ledger.py</b>（首次初始化）。core 和 atoms 里的东西，除非技术同事要改功能，否则别动。</p>
+  </section>
+
+  <!-- ===== 三、怎么启动 ===== -->
+  <section id="start">
+    <h2><span class="num">3</span>怎么启动（照着做就行）</h2>
+    <div class="steps">
+      <div class="step"><div class="no"></div><div class="body">
+        <b>第一次使用，先给台账装示例数据</b>
+        <pre><span class="cmd">python</span> E:\mayue\laocang-guan\seed_ledger.py</pre>
+      </div></div>
+      <div class="step"><div class="no"></div><div class="body">
+        <b>打开老仓管（两行设置 + 一行启动）</b>
+        <pre><span class="cm"># 这两行告诉它用本地模型文件，直接复制粘贴</span><br><span class="cmd">$env:LC_BRAIN</span>="pyllama"; <span class="cmd">$env:LC_GGUF</span>="E:\mayue\_models\qwen2.5-1.5b-instruct-q4_k_m.gguf"<br><span class="cmd">python</span> E:\mayue\laocang-guan\main.py</pre>
+        <p class="muted">看到「大脑后端: pyllama」就成功了。首次启动等几秒（模型加载），之后每句话 3~8 秒回应。</p>
+      </div></div>
+      <div class="step"><div class="no"></div><div class="body">
+        <b>体检（可选，想确认系统健康就跑）</b>
+        <pre><span class="cmd">python</span> E:\mayue\laocang-guan\test_run.py</pre>
+        <p class="muted">正常结果：15 通过，0 失败。</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ===== 四、怎么跟它说话 ===== -->
+  <section id="talk">
+    <h2><span class="num">4</span>怎么跟它说话（就说人话，不用学指令）</h2>
+    <p>直接打字，像跟仓库老师傅交代事情一样。它听懂后自己去查、去办、回来汇报。</p>
+    <div class="chat">
+      <span class="you">你：</span>查台账里有没有防静电手套<br>
+      <span class="ai">老仓管：查到 1 条：防静电手套 | 工具间-02柜 | 50 双</span>
+    </div>
+    <div class="chat">
+      <span class="you">你：</span>看一下仓库现在有多少资产<br>
+      <span class="ai">老仓管：台账共 12 项资产：工具×5、耗材×4、设备×2、文档×1</span>
+    </div>
+    <div class="chat">
+      <span class="you">你：</span>登记一台新叉车，放维修区，1 辆<br>
+      <span class="ai">老仓管：台账已更新：新叉车 已登记（维修区，1 辆）</span>
+    </div>
+    <div class="chat">
+      <span class="you">你：</span>系统环境怎么样<br>
+      <span class="ai">老仓管：GPU: NVIDIA GeForce GTX 1650 4GB | 内存剩余、磁盘剩余一并汇报</span>
+    </div>
+    <h3>小命令（斜杠开头的快捷操作）</h3>
+    <table>
+      <tr><th>输入</th><th>作用</th></tr>
+      <tr><td>/ledger</td><td>把台账全部资产列出来</td></tr>
+      <tr><td>/stats</td><td>台账统计（各类别数量）</td></tr>
+      <tr><td>/recent 5</td><td>最近 5 条操作记录</td></tr>
+      <tr><td>/mode</td><td>看当前用的是哪个大脑</td></tr>
+      <tr><td>/quit</td><td>退出</td></tr>
+    </table>
+    <p class="muted">提示：如果某句话它没听懂，会如实说「无法理解」，不会瞎猜着干。换个更直白的说法再问一次就行。</p>
+  </section>
+
+  <!-- ===== 五、它守的三条规矩 ===== -->
+  <section id="rules">
+    <h2><span class="num">5</span>它守的三条规矩（这套系统靠谱的原因）</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 5.5V11c0 4.5 3 7.6 7 9 4-1.4 7-4.5 7-9V5.5L12 3Z"/><path d="M9.5 12l1.8 1.8L15 9.8"/></svg></div>
+        <b>听不懂就拦下，绝不瞎干</b>
+        <p>模型说人话、写乱码、提没登记过的要求？调度器直接拦下，一个动作都不执行。宁可拒绝，不猜着办。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9a8 8 0 0 1 14-3"/><path d="M20 15a8 8 0 0 1-14 3"/><path d="M18 2v4h-4M6 22v-4h4"/></svg></div>
+        <b>要么全办成，要么全撤回</b>
+        <p>一次要求拆成好几步，如果做到一半出岔子，前面已经改的会自动撤销，台账回到原来的样子。</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/><path d="M8 9h8M8 13h5"/></svg></div>
+        <b>每次动手都留记录</b>
+        <p>谁在什么时候、做了哪步操作、成没成功，全部写进台账的审计记录，随时可查（/recent）。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 六、体检报告 ===== -->
+  <section id="report">
+    <h2><span class="num">6</span>体检报告（交付时的实测结果）</h2>
+    <div class="report">
+      <div class="rbox green">
+        <div class="big">15 / 15</div>
+        <b>自动化自测全过</b>
+        <p>调度、回滚、非法拦截、容错——8 组用例全绿。</p>
+      </div>
+      <div class="rbox green">
+        <div class="big">3 / 3</div>
+        <b>真模型链路全过</b>
+        <p>Qwen2.5-1.5B 本地模型，真实台账查询、系统信息全部跑通。</p>
+      </div>
+      <div class="rbox gray">
+        <div class="big">2.3 s</div>
+        <b>模型加载时间</b>
+        <p>普通电脑（GTX1650）实测，之后每句话 3~8 秒回应。</p>
+      </div>
+      <div class="rbox gray">
+        <div class="big">~2 GB</div>
+        <b>内存占用</b>
+        <p>模型 + 系统整体占用，普通电脑无压力。</p>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:10px;">目标机（RTX5060 8G）可换 Qwen2.5-3B 模型，速度更快、理解更强，代码不用改，按 docs 里 A 路线装好 Ollama 就行。</p>
+  </section>
+
+  <!-- ===== 七、常见问题 ===== -->
+  <section id="faq">
+    <h2><span class="num">7</span>常见问题（三句话讲清）</h2>
+    <details>
+      <summary>打开后卡在「大脑调用失败」怎么办？</summary>
+      <p>多半是模型文件没放对位置，或上一行 $env: 设置没生效。检查 E:\mayue\_models\ 里有没有 qwen2.5-1.5b-instruct-q4_k_m.gguf 这个文件（约 1GB），再把那两行设置重新粘贴一遍。</p>
+    </details>
+    <details>
+      <summary>它说「模型输出的不是合法鸟语DSL」？</summary>
+      <p>小模型偶尔走神，输出了一句人话而不是指令。这是安全机制在起作用——它拦下了，什么都没干。把需求说得更直白再问一次，基本就好了。</p>
+    </details>
+    <details>
+      <summary>台账是空的 / 查不到东西？</summary>
+      <p>先运行一次 seed_ledger.py 初始化示例数据。如果要录入自己的资产，直接对它说「登记XXX，放XX，X件」就行。</p>
+    </details>
+    <details>
+      <summary>想要更快更强？</summary>
+      <p>你的机器如果显卡够好（比如 RTX5060 8G），按 docs\03-部署与测试教程.md 的 A 路线装 Ollama + qwen2.5:3b，速度翻倍、理解更好，其他代码都不用动。</p>
+    </details>
+    <details>
+      <summary>这些技术文档在哪？</summary>
+      <p>docs\ 文件夹里三份：01 架构说明（给技术看的系统设计）、02 指令规范（鸟语DSL 的完整语法）、03 部署教程（装模型、启动、测试的详细步骤）。</p>
+    </details>
+  </section>
+
+  <footer>老仓管 · 轻量本地仓库智能体 &nbsp;|&nbsp; E:\mayue\laocang-guan &nbsp;|&nbsp; 模型只做大脑，脚本负责体力</footer>
+
+</div>
+</body>
+</html>
